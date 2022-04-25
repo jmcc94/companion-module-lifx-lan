@@ -1,0 +1,31 @@
+{
+	"name": "lifx-lan",
+	"version": "1.0.0",
+	"api_version": "1.0.0",
+	"keywords": [
+		"lifx",
+		"lights"
+	],
+	"manufacturer": "LIFX",
+	"product": "LAN",
+	"shortname": "LIFX LAN",
+	"description": "This module controls LIFX bulbs located on the local LAN.",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Jamie McConchie <jmcconchie52@gmail.com>",
+	"contributors": [],
+	"license": "MIT",
+	"homepage": "https://github.com/bitfocus/companion-module-lifx-lan#readme",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-lifx-lan/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-lifx-lan.git"
+	},
+	"dependencies": {
+		"node-lifx-lan": "^0.5.0"
+	}
+}
