@@ -1,5 +1,4 @@
 const instance_skel = require('../../instance_skel')
-
 const lifx = require('node-lifx-lan')
 
 let debug
@@ -8,20 +7,7 @@ let log
 class instance extends instance_skel {
 	constructor(system, id, config) {
 		super(system, id, config)
-
-		Object.assign(this, {
-			...actions,
-			...presets,
-		})
-
-		this.updateVariableDefinitions = updateVariableDefinitions
-		this.updateVariables = updateVariables
-
-
-	}
-
-	static GetUpgradeScripts() {
-		return [upgradeScripts.choicesUpgrade]
+		this.action()
 	}
 
 	config_fields() {
@@ -31,7 +17,7 @@ class instance extends instance_skel {
 				id: 'info',
 				width: 12,
 				label: 'Information',
-				value: 'This module controls BirdDog PTZ Cameras.',
+				value: 'This module controls LIFX lights on a LAN.',
 			},
 			{
 				type: 'textinput',
@@ -40,22 +26,48 @@ class instance extends instance_skel {
 				width: 6,
 				regex: this.REGEX_IP,
 			},
+			{
+				type: 'textinput',
+				id: 'mac',
+				label: 'Device MAC',
+				width: 12,
+				regex: this.REGEX_SOMETHING,
+			},
 		]
 	}
 
-	updateConfig(config) {}
-
 	destroy() {
-		if (this.udp !== undefined) {
-			this.udp.destroy()
-		}
-		if (this.poll_interval !== undefined) {
-			clearInterval(this.poll_interval)
-		}
+		lifx.destroy()
 		debug('destroy', this.id)
 	}
+	
+	init() {
+		light = lifx.createDevice({
+					ip: this.config.host,
+					mac: this.config.mac
+				}).then(() => {
+				this.log('info','Light created - ' + ip +'(' + mac + ')')
+				})
+	}
 
-	init() {}
+	action() {
+		let actions = {}
+
+		actions['light_off'] = {
+			label: 'Turn Light Off',
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Light Off',
+					id: 'light_off',
+					choices: ['On', 'Off']
+				}
+			],
+			callback: (action, bank) => {
+				light.turnOff()
+			},
+		}
+	}
 
 	initVariables() {
 		this.updateVariableDefinitions()
@@ -74,8 +86,18 @@ class instance extends instance_skel {
 		this.setActions(this.getActions())
 	}
 
-	action(action) {}
 
+
+	feedback() {
+	}
+
+	updateConfig(config) {
+		this.config = config
+	}
+
+	static GetUpgradeScripts() {
+		return [upgradeScripts.choicesUpgrade]
+	}
 
 }
 exports = module.exports = instance
